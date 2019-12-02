@@ -1,4 +1,4 @@
-package com.sekorm.tools.codegenerator;
+package com.sekorm.tools.codegenerator.core;
 
 public interface EngineInitiator {
 

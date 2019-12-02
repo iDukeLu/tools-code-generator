@@ -1,6 +1,4 @@
-package com.sekorm.tools.codegenerator;
-
-
+package com.sekorm.tools.codegenerator.core;
 
 class ApplicationTests {
 

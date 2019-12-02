@@ -1,4 +1,4 @@
-package com.sekorm.tools.codegenerator.constant;
+package com.sekorm.tools.codegenerator.core.constant;
 
 public class BeetlConstants {
 
