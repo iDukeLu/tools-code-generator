@@ -5,13 +5,11 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -57,10 +55,10 @@ public class FreemarkerEngine implements TemplateEngine {
     private FreemarkerEngine doInit() {
         freemarkerEngine = new FreemarkerEngine();
         freemarkerEngine.configuration = new Configuration(Configuration.getVersion());
-        configuration.setDefaultEncoding(StandardCharsets.UTF_8.name());
+        this.configuration.setDefaultEncoding(StandardCharsets.UTF_8.name());
         try {
             URI uri = this.getClass().getResource(FreemarkerConstants.FREEMARKER_TEMPLATES_PATH).toURI();
-            configuration.setDirectoryForTemplateLoading(new File(uri));
+            this.configuration.setDirectoryForTemplateLoading(new File(uri));
         } catch (URISyntaxException | IOException e) {
             // TODO 打印日志
         }

@@ -9,6 +9,10 @@
     <name>tools-code-generator</name>
     <description>工具：代码生成器</description>
 
+    <modules>
+        <module>tools-code-generator-core</module>
+    </modules>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
