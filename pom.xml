@@ -6,7 +6,8 @@
     <groupId>com.sekorm.tools</groupId>
     <artifactId>tools-code-generator</artifactId>
     <version>1.0.0</version>
-    <name>tools-code-generator</name>
+    <packaging>pom</packaging>
+    <name>tools :: code-generator</name>
     <description>工具：代码生成器</description>
 
     <modules>

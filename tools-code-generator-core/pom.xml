@@ -11,7 +11,7 @@
 
     <artifactId>tools-code-generator-core</artifactId>
     <version>1.0.0</version>
-    <name>tools-code-generator-core</name>
+    <name>tools :: code-generator-core</name>
     <description>Demo project for Spring Boot</description>
 
     <dependencies>

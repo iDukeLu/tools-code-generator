@@ -13,27 +13,18 @@ import java.io.IOException;
  */
 public class BeetlEngine implements TemplateEngine {
 
-    private BeetlEngine beetlEngine;
+    private static BeetlEngine beetlEngine = new BeetlEngine();
 
     private GroupTemplate groupTemplate;
 
     private BeetlEngine() {}
 
-    @Override
-    public TemplateEngine init() {
-        if (beetlEngine == null) {
-            return doInit();
-        }
+    public static BeetlEngine getSingleton() {
         return beetlEngine;
     }
 
     @Override
-    public Template<org.beetl.core.Template> readTemplate(String fileName) {
-        return new FreemarkerTemplate<org.beetl.core.Template>().setT(groupTemplate.getTemplate(fileName));
-    }
-
-    private BeetlEngine doInit() {
-        beetlEngine = new BeetlEngine();
+    public BeetlEngine init() {
         try {
             StringTemplateResourceLoader resourceLoader = new StringTemplateResourceLoader();
             Configuration configuration = Configuration.defaultConfiguration();
@@ -44,4 +35,11 @@ public class BeetlEngine implements TemplateEngine {
         return beetlEngine;
     }
 
+    @Override
+    public Template<org.beetl.core.Template> readTemplate(String fileName) {
+        if (fileName == null ) {
+            throw new NullPointerException("fileName not be null");
+        }
+        return new FreemarkerTemplate<org.beetl.core.Template>().setT(groupTemplate.getTemplate(fileName));
+    }
 }

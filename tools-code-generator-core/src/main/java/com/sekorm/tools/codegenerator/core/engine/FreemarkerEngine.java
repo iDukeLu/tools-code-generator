@@ -18,32 +18,18 @@ import java.nio.charset.StandardCharsets;
  */
 public class FreemarkerEngine implements TemplateEngine {
 
-    private FreemarkerEngine freemarkerEngine;
+    private static FreemarkerEngine freemarkerEngine = new FreemarkerEngine();
 
     private Configuration configuration;
 
     private FreemarkerEngine() {}
 
-    @Override
-    public TemplateEngine init() {
-        if (freemarkerEngine == null) {
-            return doInit();
-        }
+    public static FreemarkerEngine getSingleton() {
         return freemarkerEngine;
     }
 
     @Override
-    public Template<freemarker.template.Template> readTemplate(String fileName) {
-        try {
-            return new FreemarkerTemplate<freemarker.template.Template>().setT(configuration.getTemplate(fileName));
-        } catch (IOException e) {
-            e.printStackTrace(); // TODO 打印日志
-        }
-        return null;
-    }
-
-    private FreemarkerEngine doInit() {
-        freemarkerEngine = new FreemarkerEngine();
+    public FreemarkerEngine init() {
         freemarkerEngine.configuration = new Configuration(Configuration.getVersion());
         this.configuration.setDefaultEncoding(StandardCharsets.UTF_8.name());
         try {
@@ -53,5 +39,18 @@ public class FreemarkerEngine implements TemplateEngine {
             e.printStackTrace(); // TODO 打印日志
         }
         return freemarkerEngine;
+    }
+
+    @Override
+    public Template<freemarker.template.Template> readTemplate(String fileName) {
+        if (fileName == null ) {
+            throw new NullPointerException("fileName not be null");
+        }
+        try {
+            return new FreemarkerTemplate<freemarker.template.Template>().setT(configuration.getTemplate(fileName));
+        } catch (IOException e) {
+            e.printStackTrace(); // TODO 打印日志
+        }
+        return null;
     }
 }
