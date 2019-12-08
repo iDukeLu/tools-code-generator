@@ -1,14 +1,14 @@
 package com.sekorm.tools.codegenerator.core.engine;
 
-import com.sekorm.tools.codegenerator.core.constant.FreemarkerConstants;
+import com.sekorm.tools.codegenerator.core.constant.TemplateConstants;
 import com.sekorm.tools.codegenerator.core.template.FreemarkerTemplate;
 import com.sekorm.tools.codegenerator.core.template.Template;
+import freemarker.cache.ClassTemplateLoader;
+import freemarker.cache.NullCacheStorage;
 import freemarker.template.Configuration;
+import freemarker.template.TemplateExceptionHandler;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
 
@@ -32,12 +32,9 @@ public class FreemarkerEngine implements TemplateEngine {
     public FreemarkerEngine init() {
         freemarkerEngine.configuration = new Configuration(Configuration.getVersion());
         this.configuration.setDefaultEncoding(StandardCharsets.UTF_8.name());
-        try {
-            URI uri = this.getClass().getResource(FreemarkerConstants.FREEMARKER_TEMPLATES_PATH).toURI();
-            this.configuration.setDirectoryForTemplateLoading(new File(uri));
-        } catch (URISyntaxException | IOException e) {
-            e.printStackTrace(); // TODO 打印日志
-        }
+        this.configuration.setCacheStorage(NullCacheStorage.INSTANCE);
+        this.configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+        this.configuration.setTemplateLoader(new ClassTemplateLoader(FreemarkerEngine.class, TemplateConstants.FREEMARKER_TEMPLATES_PATH));
         return freemarkerEngine;
     }
 
