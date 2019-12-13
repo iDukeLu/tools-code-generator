@@ -30,7 +30,7 @@ public class GeneratorMojo extends AbstractMojo {
      * 生成文件的输出路径
      */
     @Parameter(name = "output", property = "code.api.generator.maven.plugin.output",
-            defaultValue = "${project.basedir}/generated/")
+            defaultValue = "${project.basedir}/generated")
     private String output;
 
     /**

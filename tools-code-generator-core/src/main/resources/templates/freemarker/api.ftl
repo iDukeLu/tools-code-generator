@@ -1,4 +1,4 @@
-package ${apiConfig.apiPackage};
+package ${apiGeneratorConfig.apiPackage};
 
 import com.idukelu.learn.springboot.mybatis.generator.business.pojo.vo.BookVO;
 import com.idukelu.learn.springboot.mybatis.generator.business.service.BookService;

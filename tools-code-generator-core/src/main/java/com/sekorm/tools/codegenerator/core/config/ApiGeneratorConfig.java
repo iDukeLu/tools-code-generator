@@ -3,14 +3,12 @@ package com.sekorm.tools.codegenerator.core.config;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import java.io.File;
-
 /**
  * @author duke
  */
 @Data
 @Accessors(chain = true)
-public class ApiConfig {
+public class ApiGeneratorConfig {
     /**
      * OpenAPI 规则文件路径
      */
@@ -60,6 +58,4 @@ public class ApiConfig {
      * 要使用的模板引擎的名称（默认:freemarker、beetl）
      */
     private String engine;
-
-
 }
