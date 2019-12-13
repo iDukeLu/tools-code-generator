@@ -10,4 +10,6 @@ public class TemplateConstants {
 
     public static final String BEETL_TEMPLATES_PATH = "/templates/beetl";
     public static final String FREEMARKER_TEMPLATES_PATH = "/templates/freemarker";
+
+    public static final String FREEMARKER_API_TEMPLATE = "api.ftl";
 }

@@ -26,6 +26,10 @@
         <beetl.version>3.0.15.RELEASE</beetl.version>
         <freemarker.version>2.3.29</freemarker.version>
         <lomboc.version>1.18.10</lomboc.version>
+        <swagger-core.version>1.6.0</swagger-core.version>
+        <commons-lang3.version>3.9</commons-lang3.version>
+        <commons-collections4.version>4.4</commons-collections4.version>
+        <commons-io.version>2.6</commons-io.version>
     </properties>
 
     <dependencyManagement>
@@ -41,6 +45,11 @@
                 <artifactId>freemarker</artifactId>
                 <version>${freemarker.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-core</artifactId>
+                <version>${swagger-core.version}</version>
+            </dependency>
             <!-- tools -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
@@ -48,8 +57,21 @@
                 <version>${lomboc.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons-collections4.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
-
-
 </project>

@@ -17,8 +17,7 @@ public interface TemplateEngine {
     /**
      * 读取指定模版
      * @param fileName 模版文件名称
-     * @param <T> 模版类型范型
      * @return 模版
      */
-    <T> Template<T> readTemplate(String fileName);
+    Template readTemplate(String fileName);
 }

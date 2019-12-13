@@ -1,5 +1,6 @@
 package com.sekorm.tools.codegenerator.core.engine;
 
+import com.sekorm.tools.codegenerator.core.template.BeetlTemplate;
 import com.sekorm.tools.codegenerator.core.template.FreemarkerTemplate;
 import com.sekorm.tools.codegenerator.core.template.Template;
 import org.beetl.core.Configuration;
@@ -36,10 +37,10 @@ public class BeetlEngine implements TemplateEngine {
     }
 
     @Override
-    public Template<org.beetl.core.Template> readTemplate(String fileName) {
+    public Template readTemplate(String fileName) {
         if (fileName == null ) {
             throw new NullPointerException("fileName not be null");
         }
-        return new FreemarkerTemplate<org.beetl.core.Template>().setT(groupTemplate.getTemplate(fileName));
+        return new BeetlTemplate().setTemplate(groupTemplate.getTemplate(fileName));
     }
 }

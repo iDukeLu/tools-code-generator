@@ -39,12 +39,12 @@ public class FreemarkerEngine implements TemplateEngine {
     }
 
     @Override
-    public Template<freemarker.template.Template> readTemplate(String fileName) {
+    public Template readTemplate(String fileName) {
         if (fileName == null ) {
             throw new NullPointerException("fileName not be null");
         }
         try {
-            return new FreemarkerTemplate<freemarker.template.Template>().setT(configuration.getTemplate(fileName));
+            return new FreemarkerTemplate().setTemplate(configuration.getTemplate(fileName));
         } catch (IOException e) {
             e.printStackTrace(); // TODO 打印日志
         }

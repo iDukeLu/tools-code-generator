@@ -1,20 +1,23 @@
 package com.sekorm.tools.codegenerator.core.template;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
+
 import java.io.Writer;
 import java.util.Map;
 
 /**
  * Beetl 模板类
- * @param <T> 模板类型
  * @author duke
  */
-public class BeetlTemplate<T> implements Template<T> {
+@Data
+@Accessors(chain = true)
+public class BeetlTemplate implements Template {
 
-    private T t;
+    private org.beetl.core.Template template;
 
     @Override
     public void render(Map param, Writer out) {
-        org.beetl.core.Template template = (org.beetl.core.Template) t;
         template.binding(param);
         template.renderTo(out);
     }
