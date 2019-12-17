@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
+ * API 生成器配置类
  * @author duke
  */
 @Data

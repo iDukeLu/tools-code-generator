@@ -10,6 +10,7 @@ import org.beetl.core.resource.StringTemplateResourceLoader;
 import java.io.IOException;
 
 /**
+ * Beetl 模版引擎
  * @author duke
  */
 public class BeetlEngine implements TemplateEngine {

@@ -8,6 +8,8 @@ import com.sekorm.tools.codegenerator.core.engine.FreemarkerEngine;
 import com.sekorm.tools.codegenerator.core.engine.TemplateEngine;
 import com.sekorm.tools.codegenerator.core.exception.NoSuchRenderEngineException;
 import com.sekorm.tools.codegenerator.core.template.Template;
+import io.swagger.models.Model;
+import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
 import io.swagger.parser.SwaggerParser;
@@ -18,9 +20,14 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
+ * API 生成器
  * @author duke
  */
 @Data
@@ -52,9 +59,9 @@ public class ApiGenerator implements Generator {
         Template template = engine.init().readTemplate(TemplateConstants.FREEMARKER_API_TEMPLATE);
 
         // 设置参数
-        HashMap<String, Object> params = new HashMap<>(2);
+        HashMap<String, Object> params = new HashMap<>(16);
         params.put("config", config);
-        params.put("swagger", swagger);
+        params.put("paths", swagger.getPaths());
 
         // 路径处理
         Path apiDir = Paths.get(config.getOutput(), config.getApiPackage().replace(".", "/")).normalize();
@@ -69,7 +76,16 @@ public class ApiGenerator implements Generator {
         // 渲染
         try {
             for (Tag tag : swagger.getTags()) {
-                Path apiFile = apiDir.resolve(tag.getDescription().replace(" ", "") + GeneratorConstants.JAVA_FILE_SUFFIX);
+                params.put("tagName", tag.getName());
+                params.put("tagDescription", tag.getDescription());
+
+                List<Map.Entry<String, io.swagger.models.Path>> gets = swagger.getPaths().entrySet().stream()
+                        .filter(p -> p.getValue().getGet() != null)
+                        .filter(p -> p.getValue().getGet().getTags().contains(tag))
+                        .collect(Collectors.toList());
+
+
+                Path apiFile = apiDir.resolve(tag.getName() + GeneratorConstants.JAVA_FILE_SUFFIX);
                 BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(apiFile.toFile())));
                 template.render(params, out);
             }
@@ -91,5 +107,13 @@ public class ApiGenerator implements Generator {
         } else {
             throw new NoSuchRenderEngineException("Currently only supports 'Freemarker' and 'Beetl' rendering engines");
         }
+    }
+
+    public static void show(ApiGeneratorConfig config) {
+        Swagger swagger = new SwaggerParser().read(config.getInputSpec());
+        for (Map.Entry<String, Model> stringModelEntry : swagger.getDefinitions().entrySet()) {
+
+        }
+        System.err.println(swagger.getDefinitions());
     }
 }

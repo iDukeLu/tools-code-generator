@@ -9,7 +9,7 @@ import java.io.Writer;
 import java.util.Map;
 
 /**
- * Freemarker 模板类
+ * Freemarker 模板
  * @author duke
  */
 @Data

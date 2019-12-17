@@ -7,7 +7,7 @@ import java.io.Writer;
 import java.util.Map;
 
 /**
- * Beetl 模板类
+ * Beetl 模板
  * @author duke
  */
 @Data

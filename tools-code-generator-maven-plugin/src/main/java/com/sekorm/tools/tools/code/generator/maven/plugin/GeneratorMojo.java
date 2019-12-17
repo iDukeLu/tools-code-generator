@@ -1,13 +1,10 @@
 package com.sekorm.tools.tools.code.generator.maven.plugin;
 
-import com.sekorm.tools.codegenerator.core.Generator;
-import com.sekorm.tools.codegenerator.core.config.ApiConfig;
-import io.swagger.models.Swagger;
-import io.swagger.parser.SwaggerParser;
+import com.sekorm.tools.codegenerator.core.ApiGenerator;
+import com.sekorm.tools.codegenerator.core.config.ApiGeneratorConfig;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -85,17 +82,18 @@ public class GeneratorMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        ApiConfig apiConfig = new ApiConfig()
-                .setInputSpec(inputSpec)
-                .setOutput(output)
-                .setApiPackage(apiPackage)
-                .setModelPackage(modelPackage)
+        getLog().info("tools-code-generator-maven-plugin:generate");
+        new ApiGenerator().setConfig(
+                new ApiGeneratorConfig()
+                .setInputSpec(inputSpec.toLowerCase())
+                .setOutput(output.toLowerCase())
+                .setApiPackage(apiPackage.toLowerCase())
+                .setModelPackage(modelPackage.toLowerCase())
                 .setModelNamePrefix(modelNamePrefix)
                 .setModelNameSuffix(modelNameSuffix)
                 .setGenerateApis(generateApis)
                 .setGenerateModels(generateModels)
                 .setSkipOverwrite(skipOverwrite)
-                .setEngine(engine);
-        Generator.generator(apiConfig);
+                .setEngine(engine.toLowerCase())).generate();
     }
 }

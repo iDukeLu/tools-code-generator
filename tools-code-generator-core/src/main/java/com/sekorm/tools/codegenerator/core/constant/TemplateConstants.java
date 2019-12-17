@@ -1,6 +1,7 @@
 package com.sekorm.tools.codegenerator.core.constant;
 
 /**
+ * 模版常量类
  * @author duke
  */
 public class TemplateConstants {
