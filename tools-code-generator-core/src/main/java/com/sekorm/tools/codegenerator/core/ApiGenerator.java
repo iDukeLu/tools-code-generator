@@ -1,11 +1,13 @@
 package com.sekorm.tools.codegenerator.core;
 
+import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.sekorm.tools.codegenerator.core.config.ApiGeneratorConfig;
 import com.sekorm.tools.codegenerator.core.constant.TemplateConstants;
 import com.sekorm.tools.codegenerator.core.engine.BeetlEngine;
 import com.sekorm.tools.codegenerator.core.engine.FreemarkerEngine;
 import com.sekorm.tools.codegenerator.core.engine.TemplateEngine;
 import com.sekorm.tools.codegenerator.core.exception.NoSuchRenderEngineException;
+import com.sekorm.tools.codegenerator.core.pojo.SimpleSwagger;
 import com.sekorm.tools.codegenerator.core.template.Template;
 import io.swagger.models.Model;
 import io.swagger.models.Operation;
@@ -14,11 +16,14 @@ import io.swagger.models.parameters.Parameter;
 import io.swagger.parser.SwaggerParser;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import net.sf.cglib.beans.BeanCopier;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,17 +74,13 @@ public class ApiGenerator implements Generator {
             }
         }
 
-        for (Map.Entry<String, io.swagger.models.Path> entry : swagger.getPaths().entrySet()) {
+        SimpleSwagger simpleSwagger = new SimpleSwagger();
+        System.err.println(Arrays.toString(swagger.getTags().toArray()));
+        System.err.println(Arrays.toString(simpleSwagger.getTags().toArray()));
 
-            Operation get = entry.getValue().getGet();
-            if (get != null) {
-                System.err.println(entry.getKey());
-                for (Parameter parameter : get.getParameters()) {
-                    System.err.println(parameter.getDescription());
-                }
-                System.err.println();
-            }
-        }
+        BeanCopier copier = BeanCopier.create(Swagger.class, SimpleSwagger.class, false);
+        copier.copy(swagger, simpleSwagger, null);
+
 
         // 渲染
 //        try {

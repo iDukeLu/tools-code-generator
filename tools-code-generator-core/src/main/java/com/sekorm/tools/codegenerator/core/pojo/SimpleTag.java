@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class Tag {
+public class SimpleTag {
 
     private String name;
 

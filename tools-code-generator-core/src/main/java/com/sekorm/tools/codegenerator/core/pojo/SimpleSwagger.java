@@ -4,6 +4,7 @@ import io.swagger.models.Model;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -12,13 +13,11 @@ import java.util.Map;
  */
 @Data
 @Accessors(chain = true)
-public class Swagger {
+public class SimpleSwagger {
 
-    private String swagger = "2.0";
+    private List<SimpleTag> tags = new ArrayList<>();
 
-    private List<Tag> tags;
+    private List<SimplePath> paths = new ArrayList<>();
 
-    private List<Path> paths;
-
-    private Map<String, Model> definitions;
+    private List<SimpleModel> definitions = new ArrayList<>();
 }

@@ -21,7 +21,7 @@ public class Operation {
 
     private String operationId;
 
-    private List<Parameter> parameters = new ArrayList();
+    private List<SimpleParameter> simpleParameters = new ArrayList();
 
     private Boolean deprecated;
 }
