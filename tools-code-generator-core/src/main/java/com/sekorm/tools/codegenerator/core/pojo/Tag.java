@@ -8,11 +8,9 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class PathBO {
+public class Tag {
 
-    private String mapping;
+    private String name;
 
-    private String method;
-
-
+    private String description;
 }

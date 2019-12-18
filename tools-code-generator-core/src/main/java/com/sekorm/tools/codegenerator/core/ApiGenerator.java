@@ -1,7 +1,6 @@
 package com.sekorm.tools.codegenerator.core;
 
 import com.sekorm.tools.codegenerator.core.config.ApiGeneratorConfig;
-import com.sekorm.tools.codegenerator.core.constant.GeneratorConstants;
 import com.sekorm.tools.codegenerator.core.constant.TemplateConstants;
 import com.sekorm.tools.codegenerator.core.engine.BeetlEngine;
 import com.sekorm.tools.codegenerator.core.engine.FreemarkerEngine;
@@ -11,20 +10,17 @@ import com.sekorm.tools.codegenerator.core.template.Template;
 import io.swagger.models.Model;
 import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
-import io.swagger.models.Tag;
+import io.swagger.models.parameters.Parameter;
 import io.swagger.parser.SwaggerParser;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * API 生成器
@@ -73,25 +69,37 @@ public class ApiGenerator implements Generator {
             }
         }
 
-        // 渲染
-        try {
-            for (Tag tag : swagger.getTags()) {
-                params.put("tagName", tag.getName());
-                params.put("tagDescription", tag.getDescription());
+        for (Map.Entry<String, io.swagger.models.Path> entry : swagger.getPaths().entrySet()) {
 
-                List<Map.Entry<String, io.swagger.models.Path>> gets = swagger.getPaths().entrySet().stream()
-                        .filter(p -> p.getValue().getGet() != null)
-                        .filter(p -> p.getValue().getGet().getTags().contains(tag))
-                        .collect(Collectors.toList());
-
-
-                Path apiFile = apiDir.resolve(tag.getName() + GeneratorConstants.JAVA_FILE_SUFFIX);
-                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(apiFile.toFile())));
-                template.render(params, out);
+            Operation get = entry.getValue().getGet();
+            if (get != null) {
+                System.err.println(entry.getKey());
+                for (Parameter parameter : get.getParameters()) {
+                    System.err.println(parameter.getDescription());
+                }
+                System.err.println();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         }
+
+        // 渲染
+//        try {
+//            for (Tag tag : swagger.getTags()) {
+//                params.put("tagName", tag.getName());
+//                params.put("tagDescription", tag.getDescription());
+//
+//                List<Map.Entry<String, io.swagger.models.Path>> gets = swagger.getPaths().entrySet().stream()
+//                        .filter(p -> p.getValue().getGet() != null)
+//                        .filter(p -> p.getValue().getGet().getTags().contains(tag))
+//                        .collect(Collectors.toList());
+//
+//
+//                Path apiFile = apiDir.resolve(tag.getName() + GeneratorConstants.JAVA_FILE_SUFFIX);
+//                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(apiFile.toFile())));
+//                template.render(params, out);
+//            }
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
     }
 
     /**

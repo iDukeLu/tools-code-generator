@@ -10,10 +10,17 @@ import java.util.List;
  */
 @Data
 @Accessors(chain = true)
-public class TagBO {
+public class Path {
+
     private String name;
 
-    private String Description;
+    private String method;
 
-    private List<PathBO> paths;
+    private List<Tag> tags;
+
+    private String summary;
+
+    private List<Parameter> parameters;
+
+
 }
