@@ -1,6 +1,5 @@
 package com.sekorm.tools.codegenerator.core;
 
-import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.sekorm.tools.codegenerator.core.config.ApiGeneratorConfig;
 import com.sekorm.tools.codegenerator.core.constant.TemplateConstants;
 import com.sekorm.tools.codegenerator.core.engine.BeetlEngine;
@@ -8,31 +7,31 @@ import com.sekorm.tools.codegenerator.core.engine.FreemarkerEngine;
 import com.sekorm.tools.codegenerator.core.engine.TemplateEngine;
 import com.sekorm.tools.codegenerator.core.exception.NoSuchRenderEngineException;
 import com.sekorm.tools.codegenerator.core.pojo.SimpleSwagger;
+import com.sekorm.tools.codegenerator.core.pojo.SimpleTag;
 import com.sekorm.tools.codegenerator.core.template.Template;
+import com.sekorm.tools.codegenerator.core.util.BeanUtils;
 import io.swagger.models.Model;
-import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
-import io.swagger.models.parameters.Parameter;
+import io.swagger.models.Tag;
 import io.swagger.parser.SwaggerParser;
 import lombok.Data;
-import lombok.experimental.Accessors;
-import net.sf.cglib.beans.BeanCopier;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * API 生成器
  * @author duke
  */
 @Data
-@Accessors(chain = true)
+
 public class ApiGenerator implements Generator {
 
     private ApiGeneratorConfig config;
@@ -75,11 +74,14 @@ public class ApiGenerator implements Generator {
         }
 
         SimpleSwagger simpleSwagger = new SimpleSwagger();
+
+//        List<SimpleTag> tags = getSimpleTags(swagger);
+        BeanUtils.copyPropertiesBatch(swagger.getTags(), simpleSwagger.getTags(), Tag.class, SimpleTag.class, null);
+
+
+
         System.err.println(Arrays.toString(swagger.getTags().toArray()));
         System.err.println(Arrays.toString(simpleSwagger.getTags().toArray()));
-
-        BeanCopier copier = BeanCopier.create(Swagger.class, SimpleSwagger.class, false);
-        copier.copy(swagger, simpleSwagger, null);
 
 
         // 渲染
@@ -101,6 +103,14 @@ public class ApiGenerator implements Generator {
 //        } catch (FileNotFoundException e) {
 //            e.printStackTrace();
 //        }
+    }
+
+    private List<SimpleTag> getSimpleTags(Swagger swagger) {
+        return swagger.getTags().stream().map(tag -> {
+                SimpleTag simpleTag = new SimpleTag();
+                BeanUtils.copyProperties(tag, simpleTag, null);
+                return simpleTag;
+            }).collect(Collectors.toList());
     }
 
     /**

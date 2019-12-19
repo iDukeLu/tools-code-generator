@@ -7,7 +7,6 @@ import lombok.experimental.Accessors;
  * @author duke
  */
 @Data
-@Accessors(chain = true)
 public class SimpleTag {
 
     private String name;

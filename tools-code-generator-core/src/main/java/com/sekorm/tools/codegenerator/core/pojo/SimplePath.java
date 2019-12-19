@@ -9,7 +9,6 @@ import java.util.List;
  * @author duke
  */
 @Data
-@Accessors(chain = true)
 public class SimplePath {
 
     private String value;

@@ -12,7 +12,6 @@ import java.util.Map;
  * @author duke
  */
 @Data
-@Accessors(chain = true)
 public class SimpleSwagger {
 
     private List<SimpleTag> tags = new ArrayList<>();
