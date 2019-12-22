@@ -1,10 +1,12 @@
 package com.sekorm.tools.codegenerator.core.engine;
 
+import com.sekorm.tools.codegenerator.core.constant.TemplateConstants;
 import com.sekorm.tools.codegenerator.core.template.BeetlTemplate;
 import com.sekorm.tools.codegenerator.core.template.FreemarkerTemplate;
 import com.sekorm.tools.codegenerator.core.template.Template;
 import org.beetl.core.Configuration;
 import org.beetl.core.GroupTemplate;
+import org.beetl.core.resource.ClasspathResourceLoader;
 import org.beetl.core.resource.StringTemplateResourceLoader;
 
 import java.io.IOException;
@@ -28,7 +30,7 @@ public class BeetlEngine implements TemplateEngine {
     @Override
     public BeetlEngine init() {
         try {
-            StringTemplateResourceLoader resourceLoader = new StringTemplateResourceLoader();
+            ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader(TemplateConstants.BEETL_TEMPLATES_PATH);
             Configuration configuration = Configuration.defaultConfiguration();
             beetlEngine.groupTemplate = new GroupTemplate(resourceLoader, configuration);
         } catch (IOException e) {
@@ -42,6 +44,6 @@ public class BeetlEngine implements TemplateEngine {
         if (fileName == null ) {
             throw new NullPointerException("fileName not be null");
         }
-        return new BeetlTemplate().setTemplate(groupTemplate.getTemplate(fileName));
+        return new BeetlTemplate().setTemplate(groupTemplate.getTemplate(fileName + TemplateConstants.BEETL_TEMPLATES_SUFFIX));
     }
 }

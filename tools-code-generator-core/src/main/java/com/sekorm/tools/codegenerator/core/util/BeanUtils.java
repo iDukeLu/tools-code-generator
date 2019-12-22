@@ -5,9 +5,12 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.Data;
 import net.sf.cglib.beans.BeanCopier;
 import net.sf.cglib.core.Converter;
+import org.checkerframework.checker.units.qual.C;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -32,25 +35,51 @@ public class BeanUtils extends BeanCopier {
      * BeanCopier 缓存
      */
     private static Cache<String, BeanCopier> cache = Caffeine.newBuilder()
-            .initialCapacity(16) // 初始大小
-            .maximumSize(32) // 最大数量
+            .initialCapacity(16)
+            .maximumSize(32)
             .build();
 
-    private BeanUtils() {}
-
+    private BeanUtils() { }
 
     /**
+     * 批量拷贝 pojo 属性
      *
-     * @param sources
-     * @param targets
-     * @param source
-     * @param target
-     * @param converter
-     * @param <S>
-     * @param <T>
+     * @param sources   来源对象集合
+     * @param targets   目标对象集合
+     * @param target    目标对象
+     * @param <S>       来源对象范型
+     * @param <T>       目标对象范型
      */
-    public  static <S, T> void copyPropertiesBatch(List<S> sources, List<T> targets, Class<S> source, Class<T> target, Converter converter) {
-        targets.clear();
+    public static <S, T> void copyPropertiesBatch(Collection<S> sources, Collection<T> targets, Class<T> target) {
+        if (targets.size() != 0) {
+            targets.clear();
+        }
+        targets.addAll(sources.stream().map(s -> {
+            try {
+                T t = target.newInstance();
+                copyProperties(s, t);
+                return t;
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }).collect(Collectors.toList()));
+    }
+
+    /**
+     * 批量拷贝 pojo 属性
+     *
+     * @param sources   来源对象集合
+     * @param targets   目标对象集合
+     * @param target    目标对象
+     * @param converter 属性转换器
+     * @param <S>       来源对象范型
+     * @param <T>       目标对象范型
+     */
+    public static <S, T> void copyPropertiesBatch(Collection<S> sources, Collection<T> targets, Class<T> target, Converter converter) {
+        if (targets.size() != 0) {
+            targets.clear();
+        }
         targets.addAll(sources.stream().map(s -> {
             try {
                 T t = target.newInstance();
@@ -65,14 +94,32 @@ public class BeanUtils extends BeanCopier {
 
     /**
      * 拷贝 pojo 属性
-     * @param source 来源对象
-     * @param target 目标对象
+     *
+     * @param source    来源对象
+     * @param target    目标对象
+     */
+    public static void copyProperties(Object source, Object target) {
+        beanUtils.copy(source, target, null);
+    }
+
+    /**
+     * 拷贝 pojo 属性
+     *
+     * @param source    来源对象
+     * @param target    目标对象
      * @param converter 属性转换器
      */
     public static void copyProperties(Object source, Object target, Converter converter) {
         beanUtils.copy(source, target, converter);
     }
 
+    /**
+     * 拷贝 pojo 属性，使用 CGLIB 操作字节码进行高效拷贝
+     *
+     * @param source    来源对象
+     * @param target    目标对象
+     * @param converter 属性转换器
+     */
     @Override
     public void copy(Object source, Object target, Converter converter) {
         BeanCopier copier = getBeanCopier(source, target);
@@ -81,6 +128,7 @@ public class BeanUtils extends BeanCopier {
 
     /**
      * 获取 BeanCopier 实例，降低 BeanCopier 实例创建的开销
+     *
      * @param source 来源对象
      * @param target 目标对象
      * @return BeanCopier 实例
@@ -105,8 +153,9 @@ public class BeanUtils extends BeanCopier {
 
         /**
          * 自定义属性转换
-         * @param value 源对象字段类型
-         * @param target 目标对象字段对应 setter 方法
+         *
+         * @param value   源对象字段类型
+         * @param target  目标对象字段对应 setter 方法
          * @param context 目标对象字段类型
          * @return 转换后的源对象字段类型
          */
@@ -115,55 +164,4 @@ public class BeanUtils extends BeanCopier {
             return value;
         }
     }
-    /*********************************************************************************************/
-
-    public static void main(String[] args) {
-
-        SourceUser sourceUser = new SourceUser();
-        sourceUser = new SourceUser();
-        sourceUser.setUsername("xiaoming");
-        sourceUser.setPassword("" + UUID.randomUUID());
-        sourceUser.setAge(18);
-        sourceUser.setEmail("" + UUID.randomUUID());
-        sourceUser.setPhone(13333);
-        TargeUser targeUser = new TargeUser();
-
-
-
-
-        // spring BeanUtils
-        Instant st1 = Instant.now();
-        for (int i = 0; i < 1; i++) {
-            org.springframework.beans.BeanUtils.copyProperties(sourceUser, targeUser);
-        }
-        Instant en1 = Instant.now();
-        System.err.println("spring: " + Duration.between(st1, en1).toMillis() + "ms");
-
-        // customer BeanCopier
-        Instant st2 = Instant.now();
-        for (int i = 0; i < 1; i++) {
-            BeanUtils.copyProperties(sourceUser, targeUser, null);
-        }
-        Instant en2 = Instant.now();
-        System.err.println("cglib: " + Duration.between(st2, en2).toMillis() + "ms");
-
-    }
-}
-
-@Data
-class SourceUser {
-    private String username;
-    private String password;
-    private Integer phone;
-    private int age;
-    private String email;
-}
-
-@Data
-class TargeUser {
-    private String username;
-    private String password;
-    private int phone;
-    private Integer age;
-    private String email;
 }

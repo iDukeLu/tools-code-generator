@@ -76,25 +76,28 @@ public class GeneratorMojo extends AbstractMojo {
     private Boolean skipOverwrite = false;
 
     /**
-     * 要使用的模板引擎的名称（默认:freemarker、beetl）
+     * 要使用的模板引擎的名称（默认:beetl、freemarker）
      */
     @Parameter(name = "engine", property = "code.api.generator.maven.plugin.engine")
-    private String engine = "freemarker";
+    private String engine = "beetl";
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("tools-code-generator-maven-plugin:generate");
-        new ApiGenerator().setConfig(
-                new ApiGeneratorConfig()
-                .setInputSpec(inputSpec.toLowerCase())
-                .setOutput(output.toLowerCase())
-                .setApiPackage(apiPackage.toLowerCase())
-                .setModelPackage(modelPackage.toLowerCase())
-                .setModelNamePrefix(modelNamePrefix)
-                .setModelNameSuffix(modelNameSuffix)
-                .setGenerateApis(generateApis)
-                .setGenerateModels(generateModels)
-                .setSkipOverwrite(skipOverwrite)
-                .setEngine(engine.toLowerCase())).generate();
+        ApiGenerator generator = new ApiGenerator();
+        ApiGeneratorConfig config = new ApiGeneratorConfig();
+        config.setInputSpec(inputSpec.toLowerCase());
+        config.setInputSpec(inputSpec.toLowerCase());
+        config.setOutput(output.toLowerCase());
+        config.setApiPackage(apiPackage.toLowerCase());
+        config.setModelPackage(modelPackage.toLowerCase());
+        config.setModelNamePrefix(modelNamePrefix);
+        config.setModelNameSuffix(modelNameSuffix);
+        config.setGenerateApis(generateApis);
+        config.setGenerateModels(generateModels);
+        config.setSkipOverwrite(skipOverwrite);
+        config.setEngine(engine.toLowerCase());
+        generator.setConfig(config);
+        generator.generate();
     }
 }

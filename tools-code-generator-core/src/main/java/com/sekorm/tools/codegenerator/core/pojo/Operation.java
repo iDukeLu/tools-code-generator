@@ -19,7 +19,7 @@ public class Operation {
 
     private String operationId;
 
-    private List<SimpleParameter> simpleParameters = new ArrayList();
+    private List<SimpleParameter> simpleParameters;
 
     private Boolean deprecated;
 }

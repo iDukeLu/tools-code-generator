@@ -14,9 +14,9 @@ import java.util.Map;
 @Data
 public class SimpleSwagger {
 
-    private List<SimpleTag> tags = new ArrayList<>();
+    private List<SimpleTag> tags;
 
-    private List<SimplePath> paths = new ArrayList<>();
+    private List<SimplePath> paths;
 
-    private List<SimpleModel> definitions = new ArrayList<>();
+    private List<SimpleModel> definitions;
 }

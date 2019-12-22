@@ -44,7 +44,7 @@ public class FreemarkerEngine implements TemplateEngine {
             throw new NullPointerException("fileName not be null");
         }
         try {
-            return new FreemarkerTemplate().setTemplate(configuration.getTemplate(fileName));
+            return new FreemarkerTemplate().setTemplate(configuration.getTemplate(fileName + TemplateConstants.FREEMARKER_TEMPLATES_SUFFIX));
         } catch (IOException e) {
             e.printStackTrace(); // TODO 打印日志
         }

@@ -1,0 +1,104 @@
+package ${config.apiPackage};
+
+import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+@Api(tags = "${tag.name}", description = "${tag.description}")
+@RestController
+public class ${tag.name} {
+
+<%for (entry in swagger.paths) {
+
+    var path = entry.value;
+    var getOperation = path.get;
+    var postOperation = path.post;
+    var putOperation = path.put;
+    var deleteOperation = path.delete;
+    var getParameters = getOperation.parameters;
+    var postParameters = postOperation.parameters;
+    var putParameters = putOperation.parameters;
+    var deleteParameters = deleteOperation.parameters;
+
+    if (getOperation != null && getOperation.tags[0] == tag.name) {%>
+    @ApiOperation("${getOperation.summary!}")
+    @GetMapping("${entry.key!}")
+    public BookVO ${getOperation.operationId!}() {
+        return bookService.${getOperation.operationId}(id);
+    }
+
+    <%}
+
+    if (postOperation != null) {%>
+    @ApiOperation("${postOperation.summary!}")
+    @PostMapping("${entry.key!}")
+    public BookVO ${postOperation.operationId!}(@PathVariable String id) {
+        return bookService.${postOperation.operationId!}(id);
+    }
+
+    <%}
+
+    if (putOperation != null) {%>
+    @ApiOperation("${putOperation.summary!}")
+    @PutMapping("${entry.key!}")
+    public BookVO ${putOperation.operationId!}(@PathVariable String id) {
+        return bookService.${putOperation.operationId!}(id);
+    }
+
+    <%}
+
+
+}%>
+
+}
+
+
+
+
+--------
+
+
+
+package ${config.apiPackage};
+
+import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+@Api(tags = "${tag.name}", description = "${tag.description}")
+@RestController
+public class ${tag.name} {
+
+<%for (entry in swagger.paths) {
+
+    var path = entry.value;
+    var getOperation = path.get;
+    var postOperation = path.post;
+    var putOperation = path.put;
+    var deleteOperation = path.delete;
+
+    if (getOperation != null && getOperation.tags[0] == tag.name) {%>
+    @ApiOperation("${getOperation.summary!}")
+    @GetMapping("${entry.key!}")
+    public BookVO ${getOperation.operationId!}(<%
+        for (parameter in getOperation.parameters) {
+            if (parameter["in"] == "path") {
+                var parameter.annotation = "@PathVariable";
+                %>@PathVariable <%
+            }
+            if (parameter["in"] == "query") {
+                %>@RequestParam <%
+            }
+            if (parameter.type == "integer" && parameter.format == "int32") {
+                var parameter.type = "Integer";
+                %>${parameter.type} <%
+            }
+        %>${parameter.name}<%
+        }%>) {
+        return bookService.${getOperation.operationId!}(<%for (parameter in getOperation.parameters) {%>${parameter.name}<%}%>);
+    }
+
+    <%}
+}%>
+
+}

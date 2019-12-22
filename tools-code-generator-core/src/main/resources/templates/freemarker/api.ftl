@@ -37,10 +37,8 @@ package ${config["apiPackage"]};
 
 <#--import com.idukelu.learn.springboot.mybatis.generator.business.pojo.vo.BookVO;-->
 <#--import com.idukelu.learn.springboot.mybatis.generator.business.service.BookService;-->
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
