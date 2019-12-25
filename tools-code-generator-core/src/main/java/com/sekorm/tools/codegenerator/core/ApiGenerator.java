@@ -9,9 +9,11 @@ import com.sekorm.tools.codegenerator.core.engine.TemplateEngine;
 import com.sekorm.tools.codegenerator.core.exception.NoSuchRenderEngineException;
 import com.sekorm.tools.codegenerator.core.template.Template;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.tags.Tag;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import lombok.Data;
+import org.apache.commons.io.IOUtils;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -31,7 +33,6 @@ public class ApiGenerator implements Generator {
     private ApiGeneratorConfig config;
 
     public ApiGenerator() {
-
     }
 
     public ApiGenerator(ApiGeneratorConfig config) {
@@ -48,7 +49,7 @@ public class ApiGenerator implements Generator {
      */
     private void generateApi() {
         // 解析 OpenAPI 规则文件、初始化引擎、获取模板
-        OpenAPI openAPI = new OpenAPIV3Parser().read(config.getInputSpec());
+        OpenAPI openApi = new OpenAPIV3Parser().read(config.getInputSpec());
 
         TemplateEngine engine = initEngine(config.getEngine());
         Template template = engine.readTemplate(TemplateConstants.API_TEMPLATE);
@@ -56,7 +57,7 @@ public class ApiGenerator implements Generator {
         // 设置参数
         HashMap<String, Object> params = new HashMap<>(16);
         params.put("config", config);
-        params.put("openAPI", openAPI);
+//        params.put("openApi", openApi);
 
         // 路径处理
         Path apiDir = Paths.get(config.getOutput(), config.getApiPackage().replace(".", "/")).normalize();
@@ -69,14 +70,31 @@ public class ApiGenerator implements Generator {
         }
 
         try {
-            for (Tag tag : openAPI.getTags()) {
-                params.put("tag", tag);
+            for (Tag tag : openApi.getTags()) {
 
-                Path apiFile = apiDir.resolve(tag.getName() + GeneratorConstants.JAVA_FILE_SUFFIX);
-                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(apiFile.toFile())));
+//                List<Map.Entry<String, PathItem>> getOptions = openApi.getPaths().entrySet().stream()
+//                        .filter(p -> p.getValue().getGet() != null)
+//                        .filter(p -> p.getValue().getGet().getTags().get(0).equals(tag.getName()))
+//                        .collect(Collectors.toList());
+//
+//                List<Map.Entry<String, PathItem>> getOptions = openApi.getPaths().entrySet().stream()
+//                        .filter(p -> p.getValue().getGet() != null)
+//                        .filter(p -> p.getValue().getGet().getTags().get(0).equals(tag.getName()))
+//                        .collect(Collectors.toList());
+//
+//                openApi.getPaths().entrySet().stream().collect(Collectors.groupingBy());
+//
+//
+//
+//                params.put("tag", tag);
+//                params.put("getOptions", getOptions);
+
+
+                String apiFile = tag.getName() + GeneratorConstants.JAVA_FILE_SUFFIX;
+                BufferedWriter out = Files.newBufferedWriter(apiDir.resolve(apiFile));
                 template.render(params, out);
             }
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
