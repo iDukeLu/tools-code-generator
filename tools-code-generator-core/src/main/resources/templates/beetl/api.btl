@@ -1,0 +1,143 @@
+package ${config.apiPackage};
+
+import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+@Api(tags = "${tag.name!}", description = "${tag.description!}")
+@RestController
+public class ${tag.name!} {
+<%
+    var service = {class: "", name: ""};
+    var servicePrefix = strutil.replace(tag.name,"Controller","");
+    var serviceSuffix = "Service";
+    var service.class = servicePrefix + serviceSuffix;
+    var service.name = strutil.toLowerCase(servicePrefix) + serviceSuffix;
+%>
+
+    @Autowired
+    private ${service.class} ${service.name};
+
+<%for (entry in openApi.paths) {
+
+    var path = entry.value;
+    var getOperation = path.get;
+    var postOperation = path.post;
+    var putOperation = path.put;
+    var deleteOperation = path.delete;
+
+    if (isNotEmpty(getOperation) && getOperation.tags[0] == tag.name) {%>
+    @ApiOperation("${getOperation.summary!}")
+    @GetMapping("${entry.key!}")
+    public BookVO ${getOperation.operationId!}(<%
+        if (isNotEmpty(getOperation.parameters)) {
+            for (parameter in getOperation.parameters) {
+                var param = {annotation: "", class: "", name: ""};
+                var position = parameter["in"];
+                var type = parameter.schema.type;
+                var format = parameter.schema.format;
+                var ref = parameter.schema.$ref;
+                param.name = parameter.name;
+
+                if (position == "path") {
+                    param.annotation = "@PathVariable";
+                }
+                if (position == "query") {
+                    param.annotation = "@RequestParam";
+                }
+                if (position == "header") {
+                    param.annotation = "@RequestHeader";
+                }
+                if (position == "cookie") {
+                    param.annotation = "@CookieValue";
+                }
+                if (isNotEmpty(getOperation.requestBody)) {
+                    param.annotation = "@RequestBody";
+                }
+                if (type == "integer" && format == "int32") {
+                    param.class = "Integer";
+                }
+                if (type == "integer" && format == "int64") {
+                    param.class = "Long";
+                }
+                if (type == "number" && format == "float") {
+                    param.class = "Float";
+                }
+                if (type == "number" && format == "double") {
+                    param.class = "Double";
+                }
+                if (type == "string") {
+                    param.class = "String";
+                }
+                if (type == "boolean") {
+                    param.class = "Boolean";
+                }
+                if (type == "string" && format == "date") {
+                    param.class = "Date";
+                }
+                if (isNotEmpty(ref)) {
+                    param.class = strutil.replace (ref,"#/components/schemas/","");
+                }
+                if (type == "array") {
+                    /**
+                    *@type (ArraySchema arraySchema)
+                    */
+
+                    var arraySchema = parameter.arraySchema;
+                    var items = arraySchema.items;
+                    if (items.type == "integer" && items.format == "int32") {
+                        param.class = "Integer[]";
+                    }
+                    if (items.type == "integer" && items.format == "int64") {
+                        param.class = "Long[]";
+                    }
+                    if (items.type == "number" && items.format == "float") {
+                        param.class = "Float[]";
+                    }
+                    if (items.type == "number" && items.format == "double") {
+                        param.class = "Double[]";
+                    }
+                    if (items.type == "string") {
+                        param.class = "String[]";
+                    }
+                    if (items.type == "boolean") {
+                        param.class = "Boolean[]";
+                    }
+                    if (items.type == "string" && items.format == "date") {
+                        param.class = "Date[]";
+                    }
+                    if (isNotEmpty(items["$ref"])) {
+                        param.class = strutil.replace (ref,"#/components/schemas/","") + "[]";
+                    }
+                }
+                %>${param.annotation!}<%
+                if (isNotEmpty(param.annotation)) {
+                    %> <%
+                }
+                %>${param.class!}<%
+                if (isNotEmpty(param.class)) {
+                    %> <%
+                }
+                %>${param.name!}<%
+                if (!parameterLP.last) {
+                    %>, <%
+                }
+            }
+        }
+        %>) {
+        return ${service.name}.${getOperation.operationId!}(<%
+            if (isNotEmpty(getOperation.parameters)) {
+                for (parameter in getOperation.parameters) {
+                    %>${parameter.name}<%
+                    if (!parameterLP.last) {
+                        %>, <%
+                    }
+                }
+            }
+            %>);
+    }
+
+    <%}
+}%>
+
+}

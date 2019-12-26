@@ -57,7 +57,7 @@ public class ApiGenerator implements Generator {
         // 设置参数
         HashMap<String, Object> params = new HashMap<>(16);
         params.put("config", config);
-//        params.put("openApi", openApi);
+        params.put("openApi", openApi);
 
         // 路径处理
         Path apiDir = Paths.get(config.getOutput(), config.getApiPackage().replace(".", "/")).normalize();
@@ -83,12 +83,7 @@ public class ApiGenerator implements Generator {
 //                        .collect(Collectors.toList());
 //
 //                openApi.getPaths().entrySet().stream().collect(Collectors.groupingBy());
-//
-//
-//
-//                params.put("tag", tag);
-//                params.put("getOptions", getOptions);
-
+                params.put("tag", tag);
 
                 String apiFile = tag.getName() + GeneratorConstants.JAVA_FILE_SUFFIX;
                 BufferedWriter out = Files.newBufferedWriter(apiDir.resolve(apiFile));
