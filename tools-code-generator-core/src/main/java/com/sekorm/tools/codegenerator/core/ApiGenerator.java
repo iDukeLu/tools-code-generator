@@ -9,18 +9,16 @@ import com.sekorm.tools.codegenerator.core.engine.TemplateEngine;
 import com.sekorm.tools.codegenerator.core.exception.NoSuchRenderEngineException;
 import com.sekorm.tools.codegenerator.core.template.Template;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.tags.Tag;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import lombok.Data;
-import org.apache.commons.io.IOUtils;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
 
 /**
  * API 生成器
@@ -71,20 +69,7 @@ public class ApiGenerator implements Generator {
 
         try {
             for (Tag tag : openApi.getTags()) {
-
-//                List<Map.Entry<String, PathItem>> getOptions = openApi.getPaths().entrySet().stream()
-//                        .filter(p -> p.getValue().getGet() != null)
-//                        .filter(p -> p.getValue().getGet().getTags().get(0).equals(tag.getName()))
-//                        .collect(Collectors.toList());
-//
-//                List<Map.Entry<String, PathItem>> getOptions = openApi.getPaths().entrySet().stream()
-//                        .filter(p -> p.getValue().getGet() != null)
-//                        .filter(p -> p.getValue().getGet().getTags().get(0).equals(tag.getName()))
-//                        .collect(Collectors.toList());
-//
-//                openApi.getPaths().entrySet().stream().collect(Collectors.groupingBy());
                 params.put("tag", tag);
-
                 String apiFile = tag.getName() + GeneratorConstants.JAVA_FILE_SUFFIX;
                 BufferedWriter out = Files.newBufferedWriter(apiDir.resolve(apiFile));
                 template.render(params, out);

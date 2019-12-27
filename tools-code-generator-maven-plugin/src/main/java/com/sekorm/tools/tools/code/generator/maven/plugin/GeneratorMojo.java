@@ -5,12 +5,9 @@ import com.sekorm.tools.codegenerator.core.config.ApiGeneratorConfig;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-
-import java.io.File;
 
 /**
  * @author duke
@@ -85,19 +82,19 @@ public class GeneratorMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("tools-code-generator-maven-plugin:generate");
         ApiGenerator generator = new ApiGenerator();
-        ApiGeneratorConfig config = new ApiGeneratorConfig();
-        config.setInputSpec(inputSpec.toLowerCase());
-        config.setInputSpec(inputSpec.toLowerCase());
-        config.setOutput(output.toLowerCase());
-        config.setApiPackage(apiPackage.toLowerCase());
-        config.setModelPackage(modelPackage.toLowerCase());
-        config.setModelNamePrefix(modelNamePrefix);
-        config.setModelNameSuffix(modelNameSuffix);
-        config.setGenerateApis(generateApis);
-        config.setGenerateModels(generateModels);
-        config.setSkipOverwrite(skipOverwrite);
-        config.setEngine(engine.toLowerCase());
-        generator.setConfig(config);
+        generator.setConfig(new ApiGeneratorConfig()
+                .setInputSpec(inputSpec.toLowerCase())
+                .setOutput(output.toLowerCase())
+                .setApiPackage(apiPackage.toLowerCase())
+                .setModelPackage(modelPackage.toLowerCase())
+                .setModelNamePrefix(modelNamePrefix)
+                .setModelNameSuffix(modelNameSuffix)
+                .setGenerateApis(generateApis)
+                .setGenerateModels(generateModels)
+                .setSkipOverwrite(skipOverwrite)
+                .setEngine(engine.toLowerCase()));
         generator.generate();
+
+
     }
 }

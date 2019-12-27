@@ -26,6 +26,7 @@ public class ${tag.name!} {
     var putOperation = path.put;
     var deleteOperation = path.delete;
 
+    // GET 请求
     if (isNotEmpty(getOperation) && getOperation.tags[0] == tag.name) {%>
     @ApiOperation("${getOperation.summary!}")
     @GetMapping("${entry.key!}")
@@ -33,10 +34,12 @@ public class ${tag.name!} {
         if (isNotEmpty(getOperation.parameters)) {
             for (parameter in getOperation.parameters) {
                 var param = {annotation: "", class: "", name: ""};
+                var items = {type: "", format: "", ref: ""};
                 var position = parameter["in"];
-                var type = parameter.schema.type;
-                var format = parameter.schema.format;
-                var ref = parameter.schema.$ref;
+                var schema = parameter.schema;
+                var type = schema.type;
+                var format = schema.format;
+                var ref = schema.$ref;
                 param.name = parameter.name;
 
                 if (position == "path") {
@@ -79,12 +82,17 @@ public class ${tag.name!} {
                     param.class = strutil.replace (ref,"#/components/schemas/","");
                 }
                 if (type == "array") {
-                    /**
-                    *@type (ArraySchema arraySchema)
-                    */
+                    var arraySchema = json(schema);
+                    var typeStart = strutil.lastIndex(arraySchema, "type") + strutil.length ("type") + 3;
+                    var typeEnd = strutil.lastIndex(arraySchema, "not") - 3;
+                    var formatStart = strutil.lastIndex(arraySchema, "format") + strutil.length ("format") + 3;
+                    var formatEnd = strutil.lastIndex(arraySchema, "$ref") - 3;
+                    var refStart = strutil.lastIndex(arraySchema, "$ref") + strutil.length ("$ref") + 3;
+                    var refEnd = strutil.lastIndex(arraySchema, "nullable") - 3;
+                    items.type = strutil.subStringTo (arraySchema, typeStart, typeEnd);
+                    items.format = strutil.subStringTo (arraySchema, formatStart, formatEnd);
+                    items.ref = strutil.subStringTo (arraySchema, refStart, refEnd);
 
-                    var arraySchema = parameter.arraySchema;
-                    var items = arraySchema.items;
                     if (items.type == "integer" && items.format == "int32") {
                         param.class = "Integer[]";
                     }
@@ -106,7 +114,7 @@ public class ${tag.name!} {
                     if (items.type == "string" && items.format == "date") {
                         param.class = "Date[]";
                     }
-                    if (isNotEmpty(items["$ref"])) {
+                    if (isNotEmpty(items.ref) && items.ref != "ul") {
                         param.class = strutil.replace (ref,"#/components/schemas/","") + "[]";
                     }
                 }
@@ -137,7 +145,363 @@ public class ${tag.name!} {
             %>);
     }
 
+    <%} // POST 请求
+    if (isNotEmpty(postOperation) && postOperation.tags[0] == tag.name) {%>
+    @ApiOperation("${postOperation.summary!}")
+    @GetMapping("${entry.key!}")
+    public BookVO ${postOperation.operationId!}(<%
+        if (isNotEmpty(postOperation.parameters)) {
+            for (parameter in postOperation.parameters) {
+                var param = {annotation: "", class: "", name: ""};
+                var items = {type: "", format: "", ref: ""};
+                var position = parameter["in"];
+                var schema = parameter.schema;
+                var type = schema.type;
+                var format = schema.format;
+                var ref = schema.$ref;
+                param.name = parameter.name;
+
+                if (position == "path") {
+                    param.annotation = "@PathVariable";
+                }
+                if (position == "query") {
+                    param.annotation = "@RequestParam";
+                }
+                if (position == "header") {
+                    param.annotation = "@RequestHeader";
+                }
+                if (position == "cookie") {
+                    param.annotation = "@CookieValue";
+                }
+                if (isNotEmpty(postOperation.requestBody)) {
+                    param.annotation = "@RequestBody";
+                }
+                if (type == "integer" && format == "int32") {
+                    param.class = "Integer";
+                }
+                if (type == "integer" && format == "int64") {
+                    param.class = "Long";
+                }
+                if (type == "number" && format == "float") {
+                    param.class = "Float";
+                }
+                if (type == "number" && format == "double") {
+                    param.class = "Double";
+                }
+                if (type == "string") {
+                    param.class = "String";
+                }
+                if (type == "boolean") {
+                    param.class = "Boolean";
+                }
+                if (type == "string" && format == "date") {
+                    param.class = "Date";
+                }
+                if (isNotEmpty(ref)) {
+                    param.class = strutil.replace (ref,"#/components/schemas/","");
+                }
+                if (type == "array") {
+                    var arraySchema = json(schema);
+                    var typeStart = strutil.lastIndex(arraySchema, "type") + strutil.length ("type") + 3;
+                    var typeEnd = strutil.lastIndex(arraySchema, "not") - 3;
+                    var formatStart = strutil.lastIndex(arraySchema, "format") + strutil.length ("format") + 3;
+                    var formatEnd = strutil.lastIndex(arraySchema, "$ref") - 3;
+                    var refStart = strutil.lastIndex(arraySchema, "$ref") + strutil.length ("$ref") + 3;
+                    var refEnd = strutil.lastIndex(arraySchema, "nullable") - 3;
+                    items.type = strutil.subStringTo (arraySchema, typeStart, typeEnd);
+                    items.format = strutil.subStringTo (arraySchema, formatStart, formatEnd);
+                    items.ref = strutil.subStringTo (arraySchema, refStart, refEnd);
+
+                    if (items.type == "integer" && items.format == "int32") {
+                        param.class = "Integer[]";
+                    }
+                    if (items.type == "integer" && items.format == "int64") {
+                        param.class = "Long[]";
+                    }
+                    if (items.type == "number" && items.format == "float") {
+                        param.class = "Float[]";
+                    }
+                    if (items.type == "number" && items.format == "double") {
+                        param.class = "Double[]";
+                    }
+                    if (items.type == "string") {
+                        param.class = "String[]";
+                    }
+                    if (items.type == "boolean") {
+                        param.class = "Boolean[]";
+                    }
+                    if (items.type == "string" && items.format == "date") {
+                        param.class = "Date[]";
+                    }
+                    if (isNotEmpty(items.ref) && items.ref != "ul") {
+                        param.class = strutil.replace (ref,"#/components/schemas/","") + "[]";
+                    }
+                }
+                %>${param.annotation!}<%
+                if (isNotEmpty(param.annotation)) {
+                    %> <%
+                }
+                %>${param.class!}<%
+                if (isNotEmpty(param.class)) {
+                    %> <%
+                }
+                %>${param.name!}<%
+                if (!parameterLP.last) {
+                    %>, <%
+                }
+            }
+        }
+        %>) {
+        return ${service.name}.${postOperation.operationId!}(<%
+            if (isNotEmpty(postOperation.parameters)) {
+                for (parameter in postOperation.parameters) {
+                    %>${parameter.name}<%
+                    if (!parameterLP.last) {
+                        %>, <%
+                    }
+                }
+            }
+            %>);
+    }
+
+    <%} // PUT 请求
+    if (isNotEmpty(putOperation) && putOperation.tags[0] == tag.name) {%>
+    @ApiOperation("${putOperation.summary!}")
+    @PutMapping("${entry.key!}")
+    public BookVO ${putOperation.operationId!}(<%
+        if (isNotEmpty(putOperation.parameters)) {
+            for (parameter in putOperation.parameters) {
+                var param = {annotation: "", class: "", name: ""};
+                var items = {type: "", format: "", ref: ""};
+                var position = parameter["in"];
+                var schema = parameter.schema;
+                var type = schema.type;
+                var format = schema.format;
+                var ref = schema.$ref;
+                param.name = parameter.name;
+
+                if (position == "path") {
+                    param.annotation = "@PathVariable";
+                }
+                if (position == "query") {
+                    param.annotation = "@RequestParam";
+                }
+                if (position == "header") {
+                    param.annotation = "@RequestHeader";
+                }
+                if (position == "cookie") {
+                    param.annotation = "@CookieValue";
+                }
+                if (isNotEmpty(putOperation.requestBody)) {
+                    param.annotation = "@RequestBody";
+                }
+                if (type == "integer" && format == "int32") {
+                    param.class = "Integer";
+                }
+                if (type == "integer" && format == "int64") {
+                    param.class = "Long";
+                }
+                if (type == "number" && format == "float") {
+                    param.class = "Float";
+                }
+                if (type == "number" && format == "double") {
+                    param.class = "Double";
+                }
+                if (type == "string") {
+                    param.class = "String";
+                }
+                if (type == "boolean") {
+                    param.class = "Boolean";
+                }
+                if (type == "string" && format == "date") {
+                    param.class = "Date";
+                }
+                if (isNotEmpty(ref)) {
+                    param.class = strutil.replace (ref,"#/components/schemas/","");
+                }
+                if (type == "array") {
+                    var arraySchema = json(schema);
+                    var typeStart = strutil.lastIndex(arraySchema, "type") + strutil.length ("type") + 3;
+                    var typeEnd = strutil.lastIndex(arraySchema, "not") - 3;
+                    var formatStart = strutil.lastIndex(arraySchema, "format") + strutil.length ("format") + 3;
+                    var formatEnd = strutil.lastIndex(arraySchema, "$ref") - 3;
+                    var refStart = strutil.lastIndex(arraySchema, "$ref") + strutil.length ("$ref") + 3;
+                    var refEnd = strutil.lastIndex(arraySchema, "nullable") - 3;
+                    items.type = strutil.subStringTo (arraySchema, typeStart, typeEnd);
+                    items.format = strutil.subStringTo (arraySchema, formatStart, formatEnd);
+                    items.ref = strutil.subStringTo (arraySchema, refStart, refEnd);
+
+                    if (items.type == "integer" && items.format == "int32") {
+                        param.class = "Integer[]";
+                    }
+                    if (items.type == "integer" && items.format == "int64") {
+                        param.class = "Long[]";
+                    }
+                    if (items.type == "number" && items.format == "float") {
+                        param.class = "Float[]";
+                    }
+                    if (items.type == "number" && items.format == "double") {
+                        param.class = "Double[]";
+                    }
+                    if (items.type == "string") {
+                        param.class = "String[]";
+                    }
+                    if (items.type == "boolean") {
+                        param.class = "Boolean[]";
+                    }
+                    if (items.type == "string" && items.format == "date") {
+                        param.class = "Date[]";
+                    }
+                    if (isNotEmpty(items.ref) && items.ref != "ul") {
+                        param.class = strutil.replace (ref,"#/components/schemas/","") + "[]";
+                    }
+                }
+                %>${param.annotation!}<%
+                if (isNotEmpty(param.annotation)) {
+                    %> <%
+                }
+                %>${param.class!}<%
+                if (isNotEmpty(param.class)) {
+                    %> <%
+                }
+                %>${param.name!}<%
+                if (!parameterLP.last) {
+                    %>, <%
+                }
+            }
+        }
+        %>) {
+        return ${service.name}.${putOperation.operationId!}(<%
+            if (isNotEmpty(putOperation.parameters)) {
+                for (parameter in putOperation.parameters) {
+                    %>${parameter.name}<%
+                    if (!parameterLP.last) {
+                        %>, <%
+                    }
+                }
+            }
+            %>);
+    }
+
+    <%} // DELETE 请求
+    if (isNotEmpty(deleteOperation) && deleteOperation.tags[0] == tag.name) {%>
+    @ApiOperation("${deleteOperation.summary!}")
+    @DeleteMapping("${entry.key!}")
+    public BookVO ${deleteOperation.operationId!}(<%
+        if (isNotEmpty(deleteOperation.parameters)) {
+            for (parameter in deleteOperation.parameters) {
+                var param = {annotation: "", class: "", name: ""};
+                var items = {type: "", format: "", ref: ""};
+                var position = parameter["in"];
+                var schema = parameter.schema;
+                var type = schema.type;
+                var format = schema.format;
+                var ref = schema.$ref;
+                param.name = parameter.name;
+
+                if (position == "path") {
+                    param.annotation = "@PathVariable";
+                }
+                if (position == "query") {
+                    param.annotation = "@RequestParam";
+                }
+                if (position == "header") {
+                    param.annotation = "@RequestHeader";
+                }
+                if (position == "cookie") {
+                    param.annotation = "@CookieValue";
+                }
+                if (isNotEmpty(deleteOperation.requestBody)) {
+                    param.annotation = "@RequestBody";
+                }
+                if (type == "integer" && format == "int32") {
+                    param.class = "Integer";
+                }
+                if (type == "integer" && format == "int64") {
+                    param.class = "Long";
+                }
+                if (type == "number" && format == "float") {
+                    param.class = "Float";
+                }
+                if (type == "number" && format == "double") {
+                    param.class = "Double";
+                }
+                if (type == "string") {
+                    param.class = "String";
+                }
+                if (type == "boolean") {
+                    param.class = "Boolean";
+                }
+                if (type == "string" && format == "date") {
+                    param.class = "Date";
+                }
+                if (isNotEmpty(ref)) {
+                    param.class = strutil.replace (ref,"#/components/schemas/","");
+                }
+                if (type == "array") {
+                    var arraySchema = json(schema);
+                    var typeStart = strutil.lastIndex(arraySchema, "type") + strutil.length ("type") + 3;
+                    var typeEnd = strutil.lastIndex(arraySchema, "not") - 3;
+                    var formatStart = strutil.lastIndex(arraySchema, "format") + strutil.length ("format") + 3;
+                    var formatEnd = strutil.lastIndex(arraySchema, "$ref") - 3;
+                    var refStart = strutil.lastIndex(arraySchema, "$ref") + strutil.length ("$ref") + 3;
+                    var refEnd = strutil.lastIndex(arraySchema, "nullable") - 3;
+                    items.type = strutil.subStringTo (arraySchema, typeStart, typeEnd);
+                    items.format = strutil.subStringTo (arraySchema, formatStart, formatEnd);
+                    items.ref = strutil.subStringTo (arraySchema, refStart, refEnd);
+
+                    if (items.type == "integer" && items.format == "int32") {
+                        param.class = "Integer[]";
+                    }
+                    if (items.type == "integer" && items.format == "int64") {
+                        param.class = "Long[]";
+                    }
+                    if (items.type == "number" && items.format == "float") {
+                        param.class = "Float[]";
+                    }
+                    if (items.type == "number" && items.format == "double") {
+                        param.class = "Double[]";
+                    }
+                    if (items.type == "string") {
+                        param.class = "String[]";
+                    }
+                    if (items.type == "boolean") {
+                        param.class = "Boolean[]";
+                    }
+                    if (items.type == "string" && items.format == "date") {
+                        param.class = "Date[]";
+                    }
+                    if (isNotEmpty(items.ref) && items.ref != "ul") {
+                        param.class = strutil.replace (ref,"#/components/schemas/","") + "[]";
+                    }
+                }
+                %>${param.annotation!}<%
+                if (isNotEmpty(param.annotation)) {
+                    %> <%
+                }
+                %>${param.class!}<%
+                if (isNotEmpty(param.class)) {
+                    %> <%
+                }
+                %>${param.name!}<%
+                if (!parameterLP.last) {
+                    %>, <%
+                }
+            }
+        }
+        %>) {
+        return ${service.name}.${deleteOperation.operationId!}(<%
+            if (isNotEmpty(deleteOperation.parameters)) {
+                for (parameter in deleteOperation.parameters) {
+                    %>${parameter.name}<%
+                    if (!parameterLP.last) {
+                        %>, <%
+                    }
+                }
+            }
+            %>);
+    }
+
     <%}
 }%>
-
 }

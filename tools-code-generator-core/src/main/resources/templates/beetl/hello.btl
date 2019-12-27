@@ -209,3 +209,30 @@ public class ${tag.name} {
 }%>
 
 }
+
+
+var items = arraySchema.items;
+if (items.type == "integer" && items.format == "int32") {
+    param.class = "Integer[]";
+}
+if (items.type == "integer" && items.format == "int64") {
+    param.class = "Long[]";
+}
+if (items.type == "number" && items.format == "float") {
+    param.class = "Float[]";
+}
+if (items.type == "number" && items.format == "double") {
+    param.class = "Double[]";
+}
+if (items.type == "string") {
+    param.class = "String[]";
+}
+if (items.type == "boolean") {
+    param.class = "Boolean[]";
+}
+if (items.type == "string" && items.format == "date") {
+    param.class = "Date[]";
+}
+if (isNotEmpty(items["$ref"])) {
+    param.class = strutil.replace (ref,"#/components/schemas/","") + "[]";
+}
