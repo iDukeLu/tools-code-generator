@@ -27,7 +27,11 @@ public class ${tag.name!} {
     var deleteOperation = path.delete;
 
     // GET 请求
-    if (isNotEmpty(getOperation) && getOperation.tags[0] == tag.name) {%>
+    if (isNotEmpty(getOperation) && getOperation.tags[0] == tag.name) {
+        if (isNotEmpty(getOperation.responses)) {
+            var xx = getOperation.responses["200"];
+        }
+    %>
     @ApiOperation("${getOperation.summary!}")
     @GetMapping("${entry.key!}")
     public BookVO ${getOperation.operationId!}(<%
@@ -54,9 +58,6 @@ public class ${tag.name!} {
                 if (position == "cookie") {
                     param.annotation = "@CookieValue";
                 }
-                if (isNotEmpty(getOperation.requestBody)) {
-                    param.annotation = "@RequestBody";
-                }
                 if (type == "integer" && format == "int32") {
                     param.class = "Integer";
                 }
@@ -127,22 +128,35 @@ public class ${tag.name!} {
                     %> <%
                 }
                 %>${param.name!}<%
-                if (!parameterLP.last) {
+                if (!parameterLP.last || isNotEmpty(getOperation.requestBody)) {
                     %>, <%
                 }
             }
         }
-        %>) {
+        var body = {annotation: "", class: "", name: ""};
+        if (isNotEmpty(getOperation.requestBody)) {
+            body.annotation = "@RequestBody";
+            var ref = getOperation.requestBody.content["application/json"].schema.$ref;
+            body.class = strutil.replace (ref,"#/components/schemas/","");
+            body.name = strutil.toLowerCase(strutil.subStringTo(body.class, 0 ,1)) + strutil.subString(body.class,1);
+            %>${body.annotation} ${body.class} ${body.name}<%
+        }%>) {
         return ${service.name}.${getOperation.operationId!}(<%
             if (isNotEmpty(getOperation.parameters)) {
                 for (parameter in getOperation.parameters) {
                     %>${parameter.name}<%
-                    if (!parameterLP.last) {
+                    if (!parameterLP.last || isNotEmpty(getOperation.requestBody)) {
                         %>, <%
                     }
                 }
             }
-            %>);
+            if (isNotEmpty(getOperation.requestBody)) {
+                body.annotation = "@RequestBody";
+                var ref = getOperation.requestBody.content["application/json"].schema.$ref;
+                body.class = strutil.replace (ref,"#/components/schemas/","");
+                body.name = strutil.toLowerCase(strutil.subStringTo(body.class, 0 ,1)) + strutil.subString(body.class,1);
+                %>${body.name}<%
+            }%>);
     }
 
     <%} // POST 请求
@@ -150,6 +164,7 @@ public class ${tag.name!} {
     @ApiOperation("${postOperation.summary!}")
     @GetMapping("${entry.key!}")
     public BookVO ${postOperation.operationId!}(<%
+
         if (isNotEmpty(postOperation.parameters)) {
             for (parameter in postOperation.parameters) {
                 var param = {annotation: "", class: "", name: ""};
@@ -173,9 +188,6 @@ public class ${tag.name!} {
                 if (position == "cookie") {
                     param.annotation = "@CookieValue";
                 }
-                if (isNotEmpty(postOperation.requestBody)) {
-                    param.annotation = "@RequestBody";
-                }
                 if (type == "integer" && format == "int32") {
                     param.class = "Integer";
                 }
@@ -246,22 +258,35 @@ public class ${tag.name!} {
                     %> <%
                 }
                 %>${param.name!}<%
-                if (!parameterLP.last) {
+                if (!parameterLP.last || isNotEmpty(postOperation.requestBody)) {
                     %>, <%
                 }
             }
         }
-        %>) {
+        var body = {annotation: "", class: "", name: ""};
+        if (isNotEmpty(postOperation.requestBody)) {
+            body.annotation = "@RequestBody";
+            var ref = postOperation.requestBody.content["application/json"].schema.$ref;
+            body.class = strutil.replace (ref,"#/components/schemas/","");
+            body.name = strutil.toLowerCase(strutil.subStringTo(body.class, 0 ,1)) + strutil.subString(body.class,1);
+            %>${body.annotation} ${body.class} ${body.name}<%
+        }%>) {
         return ${service.name}.${postOperation.operationId!}(<%
             if (isNotEmpty(postOperation.parameters)) {
                 for (parameter in postOperation.parameters) {
                     %>${parameter.name}<%
-                    if (!parameterLP.last) {
+                    if (!parameterLP.last || isNotEmpty(postOperation.requestBody)) {
                         %>, <%
                     }
                 }
             }
-            %>);
+            if (isNotEmpty(postOperation.requestBody)) {
+                body.annotation = "@RequestBody";
+                var ref = postOperation.requestBody.content["application/json"].schema.$ref;
+                body.class = strutil.replace (ref,"#/components/schemas/","");
+                body.name = strutil.toLowerCase(strutil.subStringTo(body.class, 0 ,1)) + strutil.subString(body.class,1);
+                %>${body.name}<%
+            }%>);
     }
 
     <%} // PUT 请求
@@ -292,9 +317,6 @@ public class ${tag.name!} {
                 if (position == "cookie") {
                     param.annotation = "@CookieValue";
                 }
-                if (isNotEmpty(putOperation.requestBody)) {
-                    param.annotation = "@RequestBody";
-                }
                 if (type == "integer" && format == "int32") {
                     param.class = "Integer";
                 }
@@ -365,22 +387,35 @@ public class ${tag.name!} {
                     %> <%
                 }
                 %>${param.name!}<%
-                if (!parameterLP.last) {
+                if (!parameterLP.last || isNotEmpty(putOperation.requestBody)) {
                     %>, <%
                 }
             }
         }
-        %>) {
+        var body = {annotation: "", class: "", name: ""};
+        if (isNotEmpty(putOperation.requestBody)) {
+            body.annotation = "@RequestBody";
+            var ref = putOperation.requestBody.content["application/json"].schema.$ref;
+            body.class = strutil.replace (ref,"#/components/schemas/","");
+            body.name = strutil.toLowerCase(strutil.subStringTo(body.class, 0 ,1)) + strutil.subString(body.class,1);
+            %>${body.annotation} ${body.class} ${body.name}<%
+        }%>) {
         return ${service.name}.${putOperation.operationId!}(<%
             if (isNotEmpty(putOperation.parameters)) {
                 for (parameter in putOperation.parameters) {
                     %>${parameter.name}<%
-                    if (!parameterLP.last) {
+                    if (!parameterLP.last || isNotEmpty(putOperation.requestBody)) {
                         %>, <%
                     }
                 }
             }
-            %>);
+            if (isNotEmpty(putOperation.requestBody)) {
+                body.annotation = "@RequestBody";
+                var ref = putOperation.requestBody.content["application/json"].schema.$ref;
+                body.class = strutil.replace (ref,"#/components/schemas/","");
+                body.name = strutil.toLowerCase(strutil.subStringTo(body.class, 0 ,1)) + strutil.subString(body.class,1);
+                %>${body.name}<%
+            }%>);
     }
 
     <%} // DELETE 请求
@@ -411,9 +446,6 @@ public class ${tag.name!} {
                 if (position == "cookie") {
                     param.annotation = "@CookieValue";
                 }
-                if (isNotEmpty(deleteOperation.requestBody)) {
-                    param.annotation = "@RequestBody";
-                }
                 if (type == "integer" && format == "int32") {
                     param.class = "Integer";
                 }
@@ -484,22 +516,35 @@ public class ${tag.name!} {
                     %> <%
                 }
                 %>${param.name!}<%
-                if (!parameterLP.last) {
+                if (!parameterLP.last || isNotEmpty(deleteOperation.requestBody)) {
                     %>, <%
                 }
             }
         }
-        %>) {
+        var body = {annotation: "", class: "", name: ""};
+        if (isNotEmpty(deleteOperation.requestBody)) {
+            body.annotation = "@RequestBody";
+            var ref = deleteOperation.requestBody.content["application/json"].schema.$ref;
+            body.class = strutil.replace (ref,"#/components/schemas/","");
+            body.name = strutil.toLowerCase(strutil.subStringTo(body.class, 0 ,1)) + strutil.subString(body.class,1);
+            %>${body.annotation} ${body.class} ${body.name}<%
+        }%>) {
         return ${service.name}.${deleteOperation.operationId!}(<%
             if (isNotEmpty(deleteOperation.parameters)) {
                 for (parameter in deleteOperation.parameters) {
                     %>${parameter.name}<%
-                    if (!parameterLP.last) {
+                    if (!parameterLP.last || isNotEmpty(deleteOperation.requestBody)) {
                         %>, <%
                     }
                 }
             }
-            %>);
+            if (isNotEmpty(deleteOperation.requestBody)) {
+                body.annotation = "@RequestBody";
+                var ref = deleteOperation.requestBody.content["application/json"].schema.$ref;
+                body.class = strutil.replace (ref,"#/components/schemas/","");
+                body.name = strutil.toLowerCase(strutil.subStringTo(body.class, 0 ,1)) + strutil.subString(body.class,1);
+                %>${body.name}<%
+            }%>);
     }
 
     <%}
